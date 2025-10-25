@@ -28,7 +28,22 @@ When using the planning tool:
 
 ## llmcc tool
 
-llmcc is a lightweight indexing engine for files or folders of a codebase, given a symbol name, like class/struct, function etc. it can find all the related code for you.
+llmcc is a lightweight indexing engine for files or folders of a codebase, given a symbol name, for a class/struct, function etc. it can find all the related code for you.
+- Everytime when you need to know more context about a class or struct or function, always use llmcc, it can give you full context quickly
+- If you feel output from llmcc is missing some important part, can use other search tools like rg, grep etc.
+- Think of llmcc as the “structured view”: use it whenever you need to understand a symbol (struct, enum, fn) and
+  its relationships. Always scope --dir just large enough to cover the crate(s) you care about; add --recursive for
+  transitive call sites; throw on --print-graph only when you really need the graph dump.
+- Layer in rg/grep for quick text scans. After llmcc shows you a function’s signature, rg "ModelClient::stream" finds
+  literal invocations fast; rg --glob '*.rs' "ResponseEvent" isolates string mentions that aren’t real dependencies.
+- Use llmcc first to orient, then jump straight to line numbers with sed -n/nl/rg -n. That avoids paging through the
+  10k‑line IR dump and lets you inspect the exact span the tool references.
+- For big graphs, follow up with rg to confirm specific paths. Example: after llmcc --query ModelClient --recursive
+  --print-graph, a targeted rg "attempt_stream_responses" keeps you grounded without re-parsing the graph output.
+- Mix rg --context (or ripgrep’s multiple file hits) with llmcc. llmcc gives the semantic map; rg answers “what does
+  the code actually do right here?” fast.
+- If you only need the definition, llmcc --query plus a straight sed -n 'start,endp' file.rs is faster than scrolling
+  the IR; for plain string hunts (TODO, config keys), stick to rg exclusively.
 
 
 ## Codex CLI harness, sandboxing, and approvals
