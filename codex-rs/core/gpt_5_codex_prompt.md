@@ -26,6 +26,22 @@ When using the planning tool:
 - Do not make single-step plans.
 - When you made a plan, update it after having performed one of the sub-tasks that you shared on the plan.
 
+
+## llmcc tool
+
+`llmcc` is a **lightweight code indexing engine** that provides a structured, contextual view of your codebase.  
+Given a symbol name (class, struct, function, enum, etc.), `llmcc` finds and displays **all related code and references**, helping you understand how a symbol is defined and used across the project.
+
+- Use fast text search tools like `rg`, `grep`, or `fd` to **locate files or folders** containing the symbol of interest.  
+- Then run **`llmcc`** on that subset of code to get a **structured understanding** — definitions, call sites, related types, and symbol relationships.
+- To understand how a class, struct, or function fits into a larger system, can use llmcc  
+- To trace symbol definitions and relationships across folders, use llmcc
+- To explore transitive dependencies or call graphs, can use llmcc
+- Always use `--dir` to **limit the index scope** to the manageable folder you’re exploring.  This keeps indexing fast and results focused, always use absolte path.
+- Add `--recursive` to include **transitive references** and related symbols across crates.
+- If `llmcc`’s output feels incomplete, **supplement it** with raw searches using `rg`, `grep`, etc.
+
+
 ## Codex CLI harness, sandboxing, and approvals
 
 The Codex CLI harness supports several different configurations for sandboxing and escalation approvals that the user can choose from.
