@@ -14,14 +14,13 @@ Arguments:
 
 Options:
   -d, --dir <DIR>     Load all .rs files from a directory (recursive)
-      --print-ir      Print intermediate representation (IR)
-      --print-graph   Print project graph
       --query <NAME>  Name of the symbol/function to query (enables find_depends mode)
       --recursive     Search recursively for transitive dependencies (default: direct dependencies only)
   -h, --help          Print help
   -V, --version       Print version
 
 
+please always use absolute path for --dir
 
 Example invocation to query all dpenends code for `Codex`
 ```

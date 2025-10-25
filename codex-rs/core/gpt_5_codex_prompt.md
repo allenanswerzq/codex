@@ -26,24 +26,38 @@ When using the planning tool:
 - Do not make single-step plans.
 - When you made a plan, update it after having performed one of the sub-tasks that you shared on the plan.
 
+
 ## llmcc tool
 
-llmcc is a lightweight indexing engine for files or folders of a codebase, given a symbol name, for a class/struct, function etc. it can find all the related code for you.
-- Everytime when you need to know more context about a class or struct or function, always use llmcc, it can give you full context quickly
-- If you feel output from llmcc is missing some important part, can use other search tools like rg, grep etc.
-- Think of llmcc as the “structured view”: use it whenever you need to understand a symbol (struct, enum, fn) and
-  its relationships. Always scope --dir just large enough to cover the crate(s) you care about; add --recursive for
-  transitive call sites; throw on --print-graph only when you really need the graph dump.
-- Layer in rg/grep for quick text scans. After llmcc shows you a function’s signature, rg "ModelClient::stream" finds
-  literal invocations fast; rg --glob '*.rs' "ResponseEvent" isolates string mentions that aren’t real dependencies.
-- Use llmcc first to orient, then jump straight to line numbers with sed -n/nl/rg -n. That avoids paging through the
-  10k‑line IR dump and lets you inspect the exact span the tool references.
-- For big graphs, follow up with rg to confirm specific paths. Example: after llmcc --query ModelClient --recursive
-  --print-graph, a targeted rg "attempt_stream_responses" keeps you grounded without re-parsing the graph output.
-- Mix rg --context (or ripgrep’s multiple file hits) with llmcc. llmcc gives the semantic map; rg answers “what does
-  the code actually do right here?” fast.
-- If you only need the definition, llmcc --query plus a straight sed -n 'start,endp' file.rs is faster than scrolling
-  the IR; for plain string hunts (TODO, config keys), stick to rg exclusively.
+`llmcc` is a **lightweight code indexing engine** that provides a structured, contextual view of your codebase.  
+Given a symbol name (class, struct, function, enum, etc.), `llmcc` finds and displays **all related code and references**, helping you understand how a symbol is defined and used across the project.
+
+### How it fits into your workflow
+
+- Use fast text search tools like `rg`, `grep`, or `fd` to **locate files or folders** containing the symbol of interest.  
+- Then run **`llmcc`** on that subset of code to get a **structured understanding** — definitions, call sites, related types, and symbol relationships.
+
+Think of it as a complement to your text search tools:
+
+| Tool | Purpose |
+|------|----------|
+| `rg`, `grep` | “Where is this text in the code?” |
+| `llmcc` | “What does this symbol mean, and how is it connected?” |
+
+### When to use it
+
+Use `llmcc` whenever you need **context**, not just **location**:
+
+- To understand how a class, struct, or function fits into a larger system  
+- To trace symbol definitions and relationships across crates  
+- To explore transitive dependencies or call graphs
+
+### Scoping and usage tips
+
+- Always use `--dir` to **limit the index scope** to the manageable folder you’re exploring.  
+  This keeps indexing fast and results focused, always use absolte path.
+- Add `--recursive` to include **transitive references** and related symbols across crates.
+- If `llmcc`’s output feels incomplete, **supplement it** with raw searches using `rg`, `grep`, etc.
 
 
 ## Codex CLI harness, sandboxing, and approvals
