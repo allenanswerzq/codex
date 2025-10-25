@@ -1,15 +1,17 @@
+use anyhow::Result;
+use anyhow::anyhow;
 use clap::Parser;
-
 use llmcc::LlmccOptions;
 use llmcc::run_main;
 use llmcc_python::LangPython;
 use llmcc_rust::LangRust;
+use std::process;
 
 #[derive(Parser, Debug)]
 #[command(name = "llmcc")]
 #[command(about = "llmcc: llm context compiler")]
 #[command(version)]
-struct Args {
+pub struct Cli {
     /// Files to compile
     #[arg(value_name = "FILE", required_unless_present = "dir")]
     files: Vec<String>,
@@ -39,25 +41,43 @@ struct Args {
     recursive: bool,
 }
 
-pub fn main() {
-    let args = Args::parse();
+pub fn run(cli: Cli) -> Result<()> {
+    let Cli {
+        files,
+        dir,
+        lang,
+        print_ir,
+        print_graph,
+        query,
+        recursive,
+    } = cli;
 
     let opts = LlmccOptions {
-        files: args.files,
-        dir: args.dir,
-        print_ir: args.print_ir,
-        print_graph: args.print_graph,
-        query: args.query,
-        recursive: args.recursive,
+        files,
+        dir,
+        print_ir,
+        print_graph,
+        query,
+        recursive,
     };
 
-    let result = match args.lang.as_str() {
-        "rust" => run_main::<LangRust>(&opts),
-        "python" => run_main::<LangPython>(&opts),
-        _ => Err(format!("Unknown language: {}", args.lang).into()),
+    let output = match lang.as_str() {
+        "rust" => run_main::<LangRust>(&opts).map_err(|err| anyhow!("{err}"))?,
+        "python" => run_main::<LangPython>(&opts).map_err(|err| anyhow!("{err}"))?,
+        _ => return Err(anyhow!("Unknown language: {lang}")),
     };
 
-    if let Ok(Some(output)) = result {
+    if let Some(output) = output {
         println!("{output}");
+    }
+
+    Ok(())
+}
+
+pub fn main() {
+    let cli = Cli::parse();
+    if let Err(err) = run(cli) {
+        eprintln!("{err}");
+        process::exit(1);
     }
 }

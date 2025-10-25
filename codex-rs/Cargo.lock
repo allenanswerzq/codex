@@ -974,6 +974,7 @@ dependencies = [
  "codex-common",
  "codex-core",
  "codex-exec",
+ "codex-llmcc",
  "codex-login",
  "codex-mcp-server",
  "codex-process-hardening",
@@ -1232,6 +1233,7 @@ dependencies = [
 name = "codex-llmcc"
 version = "0.0.0"
 dependencies = [
+ "anyhow",
  "clap",
  "llmcc",
  "llmcc-python",

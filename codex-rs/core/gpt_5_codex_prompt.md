@@ -32,30 +32,12 @@ When using the planning tool:
 `llmcc` is a **lightweight code indexing engine** that provides a structured, contextual view of your codebase.  
 Given a symbol name (class, struct, function, enum, etc.), `llmcc` finds and displays **all related code and references**, helping you understand how a symbol is defined and used across the project.
 
-### How it fits into your workflow
-
 - Use fast text search tools like `rg`, `grep`, or `fd` to **locate files or folders** containing the symbol of interest.  
 - Then run **`llmcc`** on that subset of code to get a **structured understanding** — definitions, call sites, related types, and symbol relationships.
-
-Think of it as a complement to your text search tools:
-
-| Tool | Purpose |
-|------|----------|
-| `rg`, `grep` | “Where is this text in the code?” |
-| `llmcc` | “What does this symbol mean, and how is it connected?” |
-
-### When to use it
-
-Use `llmcc` whenever you need **context**, not just **location**:
-
-- To understand how a class, struct, or function fits into a larger system  
-- To trace symbol definitions and relationships across crates  
-- To explore transitive dependencies or call graphs
-
-### Scoping and usage tips
-
-- Always use `--dir` to **limit the index scope** to the manageable folder you’re exploring.  
-  This keeps indexing fast and results focused, always use absolte path.
+- To understand how a class, struct, or function fits into a larger system, can use llmcc  
+- To trace symbol definitions and relationships across folders, use llmcc
+- To explore transitive dependencies or call graphs, can use llmcc
+- Always use `--dir` to **limit the index scope** to the manageable folder you’re exploring.  This keeps indexing fast and results focused, always use absolte path.
 - Add `--recursive` to include **transitive references** and related symbols across crates.
 - If `llmcc`’s output feels incomplete, **supplement it** with raw searches using `rg`, `grep`, etc.
 

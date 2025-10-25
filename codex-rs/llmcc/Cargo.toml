@@ -22,3 +22,4 @@ llmcc.workspace = true
 llmcc-rust.workspace = true
 llmcc-python.workspace = true
 clap.workspace = true
+anyhow.workspace = true

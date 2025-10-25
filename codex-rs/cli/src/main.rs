@@ -16,6 +16,7 @@ use codex_cli::login::run_logout;
 use codex_cloud_tasks::Cli as CloudTasksCli;
 use codex_common::CliConfigOverrides;
 use codex_exec::Cli as ExecCli;
+use codex_llmcc::Cli as LlmccCli;
 use codex_responses_api_proxy::Args as ResponsesApiProxyArgs;
 use codex_tui::AppExitInfo;
 use codex_tui::Cli as TuiCli;
@@ -79,6 +80,9 @@ enum Subcommand {
 
     /// [experimental] Run the app server.
     AppServer,
+
+    /// Run the llmcc context compiler.
+    Llmcc(LlmccCli),
 
     /// Generate shell completion scripts.
     Completion(CompletionCommand),
@@ -375,6 +379,9 @@ async fn cli_main(codex_linux_sandbox_exe: Option<PathBuf>) -> anyhow::Result<()
         }
         Some(Subcommand::AppServer) => {
             codex_app_server::run_main(codex_linux_sandbox_exe, root_config_overrides).await?;
+        }
+        Some(Subcommand::Llmcc(cli)) => {
+            codex_llmcc::run(cli)?;
         }
         Some(Subcommand::Resume(ResumeCommand {
             session_id,
