@@ -1,7 +1,7 @@
 ## `llmcc`
 
 
-Use the `llmcc` shell command to indexing flies or folders first, then extract dependenciy graphs from a symbol.
+Use the `llmcc` shell command to indexing flies or folders, then extract dependenciy graphs from a symbol.
 
 
 *** Full help output
@@ -21,3 +21,9 @@ Options:
   -h, --help          Print help
   -V, --version       Print version
 
+
+
+Example invocation to query all dpenends code for `Codex`
+```
+  shell {"command":["llmcc", "--dir codex-rs/core --lang rust --query Codex"]}
+```

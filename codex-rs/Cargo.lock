@@ -903,6 +903,7 @@ dependencies = [
  "codex-apply-patch",
  "codex-core",
  "codex-linux-sandbox",
+ "codex-llmcc",
  "dotenvy",
  "tempfile",
  "tokio",
@@ -1062,7 +1063,6 @@ dependencies = [
  "codex-apply-patch",
  "codex-async-utils",
  "codex-file-search",
- "codex-llmcc",
  "codex-otel",
  "codex-protocol",
  "codex-rmcp-client",
@@ -1233,6 +1233,7 @@ name = "codex-llmcc"
 version = "0.0.0"
 dependencies = [
  "clap",
+ "llmcc",
  "llmcc-python",
  "llmcc-rust",
 ]
@@ -3528,6 +3529,20 @@ name = "litemap"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "241eaef5fd12c88705a01fc1066c48c4b36e0dd4377dcdc7ec3942cea7a69956"
+
+[[package]]
+name = "llmcc"
+version = "0.2.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4aba0c194423078f91ac3d4d1afcd9582dcdeb83349cdace9453cb10a12cdcc3"
+dependencies = [
+ "clap",
+ "llmcc-core",
+ "llmcc-python",
+ "llmcc-rust",
+ "rayon",
+ "regex",
+]
 
 [[package]]
 name = "llmcc-core"

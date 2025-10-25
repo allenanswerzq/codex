@@ -9,6 +9,7 @@ use tempfile::TempDir;
 
 const LINUX_SANDBOX_ARG0: &str = "codex-linux-sandbox";
 const APPLY_PATCH_ARG0: &str = "apply_patch";
+const LLMCC_ARG0: &str = "llmcc";
 const MISSPELLED_APPLY_PATCH_ARG0: &str = "applypatch";
 
 /// While we want to deploy the Codex CLI as a single executable for simplicity,
@@ -50,6 +51,9 @@ where
         codex_linux_sandbox::run_main();
     } else if exe_name == APPLY_PATCH_ARG0 || exe_name == MISSPELLED_APPLY_PATCH_ARG0 {
         codex_apply_patch::main();
+    } else if exe_name == LLMCC_ARG0 {
+        codex_llmcc::main();
+        return Ok(());
     }
 
     let argv1 = args.next().unwrap_or_default();
@@ -133,13 +137,15 @@ where
 
 /// Creates a temporary directory with either:
 ///
-/// - UNIX: `apply_patch` symlink to the current executable
-/// - WINDOWS: `apply_patch.bat` batch script to invoke the current executable
-///   with the "secret" --codex-run-as-apply-patch flag.
+/// - UNIX: `apply_patch`, `applypatch`, and `llmcc` symlinks to the current
+///   executable
+/// - WINDOWS: `apply_patch.bat` and `applypatch.bat` batch scripts to invoke
+///   the current executable with the "secret" --codex-run-as-apply-patch flag,
+///   plus `llmcc.bat` to pass through arguments unchanged.
 ///
 /// This temporary directory is prepended to the PATH environment variable so
-/// that `apply_patch` can be on the PATH without requiring the user to
-/// install a separate `apply_patch` executable, simplifying the deployment of
+/// that helper binaries like `apply_patch` and `llmcc` can be on the PATH
+/// without requiring separate installations, simplifying the deployment of
 /// Codex CLI.
 ///
 /// IMPORTANT: This function modifies the PATH environment variable, so it MUST
@@ -148,17 +154,19 @@ fn prepend_path_entry_for_apply_patch() -> std::io::Result<TempDir> {
     let temp_dir = TempDir::new()?;
     let path = temp_dir.path();
 
-    for filename in &[APPLY_PATCH_ARG0, MISSPELLED_APPLY_PATCH_ARG0] {
-        let exe = std::env::current_exe()?;
+    let exe = std::env::current_exe()?;
 
-        #[cfg(unix)]
-        {
+    #[cfg(unix)]
+    {
+        for filename in [APPLY_PATCH_ARG0, MISSPELLED_APPLY_PATCH_ARG0, LLMCC_ARG0] {
             let link = path.join(filename);
             symlink(&exe, &link)?;
         }
+    }
 
-        #[cfg(windows)]
-        {
+    #[cfg(windows)]
+    {
+        for filename in [APPLY_PATCH_ARG0, MISSPELLED_APPLY_PATCH_ARG0] {
             let batch_script = path.join(format!("{filename}.bat"));
             std::fs::write(
                 &batch_script,
@@ -170,6 +178,17 @@ fn prepend_path_entry_for_apply_patch() -> std::io::Result<TempDir> {
                 ),
             )?;
         }
+
+        let llmcc_script = path.join(format!("{LLMCC_ARG0}.bat"));
+        std::fs::write(
+            &llmcc_script,
+            format!(
+                r#"@echo off
+"{}" %*
+"#,
+                exe.display()
+            ),
+        )?;
     }
 
     #[cfg(unix)]

@@ -11,8 +11,14 @@ workspace = true
 path = "src/main.rs"
 name = "llmcc"
 
+
+[lib]
+path = "src/lib.rs"
+name = "codex_llmcc"
+
 [dependencies]
 # llmcc-core.workspace = true
+llmcc.workspace = true
 llmcc-rust.workspace = true
 llmcc-python.workspace = true
 clap.workspace = true

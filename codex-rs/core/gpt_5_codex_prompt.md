@@ -26,6 +26,11 @@ When using the planning tool:
 - Do not make single-step plans.
 - When you made a plan, update it after having performed one of the sub-tasks that you shared on the plan.
 
+## llmcc tool
+
+llmcc is a lightweight indexing engine for files or folders of a codebase, given a symbol name, like class/struct, function etc. it can find all the related code for you.
+
+
 ## Codex CLI harness, sandboxing, and approvals
 
 The Codex CLI harness supports several different configurations for sandboxing and escalation approvals that the user can choose from.
