@@ -3534,9 +3534,9 @@ checksum = "241eaef5fd12c88705a01fc1066c48c4b36e0dd4377dcdc7ec3942cea7a69956"
 
 [[package]]
 name = "llmcc"
-version = "0.2.21"
+version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b7939be303bfce2f2957208d7cc2d3978cd7201e96ff1c9ace5297ef682166e"
+checksum = "e03001a36ff031fcf4b38f4a1c76b58980e4812e906b2c5155f75846710a1675"
 dependencies = [
  "clap",
  "llmcc-core",
@@ -3548,9 +3548,9 @@ dependencies = [
 
 [[package]]
 name = "llmcc-core"
-version = "0.2.21"
+version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce3230a0c51496ae1284dac585e4e4e479ebc401427146e9685c8cceb7667f47"
+checksum = "40e718dcc38781016ba1a4f58256c224a468ee0388706d50aba591be3866336e"
 dependencies = [
  "ignore",
  "paste",
@@ -3565,9 +3565,9 @@ dependencies = [
 
 [[package]]
 name = "llmcc-python"
-version = "0.2.21"
+version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d5b5ba474185bcd30e0fb93e7f45765c898935b69d019f4416943536b5e384e"
+checksum = "ff784c464dee9e8dbe8fc385a2d17908a63199246b61060c3f6a23abcfac910d"
 dependencies = [
  "llmcc-core",
  "tree-sitter",
@@ -3576,9 +3576,9 @@ dependencies = [
 
 [[package]]
 name = "llmcc-rust"
-version = "0.2.21"
+version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72bab9b7ea3abdcd7b4770889db896c3cd5e9475915e343311729d3fadd48088"
+checksum = "900709ed76a7cd792f4d86573efda0efd158d21e72ca659178788f2e88bc17d2"
 dependencies = [
  "llmcc-core",
  "tree-sitter",
