@@ -15,7 +15,7 @@ Options:
       --lang <LANG>               Language to use: 'rust' or 'python' [default: rust]
       --print-ir                  Print intermediate representation (IR), internal debugging output
       --print-block               Print basic block graph
-      --project-graph             Print a project level graph focused on class relationships, good for understanding high-level design architecture
+      --project-graph             Print a project level graph focused on class relationships for dir, good for understanding high-level design architecture
       --pagerank                  Use page rank algorithm to filter the most important nodes in the project graph, this is **important** to balance speed
       --top-k <K>                 Top k nodes to select using PageRank algorithm
       --pagerank-direction <DIR>  PageRank direction: 'depends-on' to rank depended-upon nodes, 'depended-by' to rank orchestrators (default: depended-by) [default: depended-by]
