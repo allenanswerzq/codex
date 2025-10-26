@@ -32,11 +32,10 @@ When using the planning tool:
 `llmcc` is a **lightweight code indexing engine** that provides a structured, contextual view of your codebase.  
 Given a symbol name (class, struct, function, enum, etc.), `llmcc` finds and displays **all related code and references**, helping you understand how a symbol is defined and used across the project.
 
-- Use fast text search tools like `rg`, `grep`, or `fd` to **locate files or folders** containing the symbol of interest.  
-- Then run **`llmcc`** on that subset of code to get a **structured understanding** — definitions, call sites, related types, and symbol relationships.
-- To understand how a class, struct, or function fits into a larger system, can use llmcc  
-- To trace symbol definitions and relationships across folders, use llmcc
-- To explore transitive dependencies or call graphs, can use llmcc
+- Use **`llmcc`** --project-graph --pagerank to understand a large codebase at the high level very quickly
+- Use **`llmcc`** to a subset of code/folders to get a **structured understanding** — definitions, call sites, related types, and symbol relationships.
+- Use **`llmcc`** --query to search related code a symbol, cloud be class/struct function, enum etc.
+- To explore transitive dependencies or call graphs, can use llmcc --query
 - Always use `--dir` to **limit the index scope** to the manageable folder you’re exploring.  This keeps indexing fast and results focused, always use absolte path.
 - Add `--recursive` to include **transitive references** and related symbols across crates.
 - If `llmcc`’s output feels incomplete, **supplement it** with raw searches using `rg`, `grep`, etc.

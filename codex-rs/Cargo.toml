@@ -207,9 +207,9 @@ which = "6"
 wildmatch = "2.5.0"
 wiremock = "0.6"
 zeroize = "1.8.1"
-llmcc = "0.2.18"
-llmcc-rust = "0.2.18"
-llmcc-python = "0.2.18"
+llmcc = "0.2.21"
+llmcc-rust = "0.2.21"
+llmcc-python = "0.2.21"
 
 [workspace.lints]
 rust = {}

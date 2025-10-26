@@ -24,13 +24,34 @@ pub struct Cli {
     #[arg(long, value_name = "LANG", default_value = "rust")]
     lang: String,
 
-    /// Print intermediate representation (IR)
+    /// Print intermediate representation (IR), internal debugging output
     #[arg(long, default_value_t = false)]
     print_ir: bool,
 
-    /// Print project graph
+    /// Print basic block graph
     #[arg(long, default_value_t = false)]
-    print_graph: bool,
+    print_block: bool,
+
+    /// Print a project level graph focused on class relationships, good for understanding high-level design architecture
+    #[arg(long, default_value_t = false)]
+    project_graph: bool,
+
+    /// Use page rank algorithm to filter the most important nodes in the project graph
+    #[arg(long, default_value_t = false)]
+    pagerank: bool,
+
+    /// Top k nodes to select using PageRank algorithm
+    #[arg(long, value_name = "K", requires = "pagerank")]
+    top_k: Option<usize>,
+
+    /// PageRank direction: 'depends-on' to rank depended-upon nodes, 'depended-by' to rank orchestrators (default: depended-by)
+    #[arg(
+        long,
+        value_name = "DIR",
+        requires = "pagerank",
+        default_value = "depended-by"
+    )]
+    pagerank_direction: String,
 
     /// Name of the symbol/function to query (enables find_depends mode)
     #[arg(long, value_name = "NAME")]
@@ -39,32 +60,31 @@ pub struct Cli {
     /// Search recursively for transitive dependencies (default: direct dependencies only)
     #[arg(long, default_value_t = false)]
     recursive: bool,
+
+    /// Return blocks that depend on the queried symbol instead of the ones it depends on
+    #[arg(long, default_value_t = false, conflicts_with = "recursive")]
+    dependents: bool,
 }
 
-pub fn run(cli: Cli) -> Result<()> {
-    let Cli {
-        files,
-        dir,
-        lang,
-        print_ir,
-        print_graph,
-        query,
-        recursive,
-    } = cli;
-
+pub fn run(args: Cli) -> Result<()> {
     let opts = LlmccOptions {
-        files,
-        dir,
-        print_ir,
-        print_graph,
-        query,
-        recursive,
+        files: args.files,
+        dir: args.dir,
+        print_ir: args.print_ir,
+        print_block: args.print_block,
+        project_graph: args.project_graph,
+        pagerank: args.pagerank,
+        top_k: args.top_k,
+        pagerank_direction: args.pagerank_direction,
+        query: args.query,
+        recursive: args.recursive,
+        dependents: args.dependents,
     };
 
-    let output = match lang.as_str() {
+    let output = match args.lang.as_str() {
         "rust" => run_main::<LangRust>(&opts).map_err(|err| anyhow!("{err}"))?,
         "python" => run_main::<LangPython>(&opts).map_err(|err| anyhow!("{err}"))?,
-        _ => return Err(anyhow!("Unknown language: {lang}")),
+        _ => return Err(anyhow!("Unknown language: {0}", args.lang)),
     };
 
     if let Some(output) = output {
