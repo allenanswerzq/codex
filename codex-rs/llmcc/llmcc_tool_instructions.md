@@ -2,28 +2,42 @@
 
 Use the `llmcc` shell command to indexing flies or folders, then extract dependenciy graphs for a symbol.
 
-*** Full --help output
-llmcc: llm context compiler
+*** help info
+llmcc [OPTIONS] < --file <FILE>...|--dir <DIR>... >
+Input (required, one of):
 
-Usage: llmcc [OPTIONS] [FILE]...
+-f, --file <FILE>... — Individual files to compile (repeatable)
+-d, --dir <DIR>... — Directories to scan recursively (repeatable)
+Language (optional):
 
-Arguments:
-  [FILE]...  Files to compile
+--lang <LANG> — Language: 'rust' or 'python' [default: rust]
+Analysis (optional):
 
-Options:
-  -d, --dir <DIR>                 Load all .rs files from a directory (recursive)
-      --lang <LANG>               Language to use: 'rust' or 'python' [default: rust]
-      --print-ir                  Print intermediate representation (IR), internal debugging output
-      --print-block               Print basic block graph
-      --project-graph             Print a project level graph focused on class relationships for dir, good for understanding high-level design architecture
-      --pagerank                  Use page rank algorithm to filter the most important nodes in the project graph, this is **important** to balance speed
-      --top-k <K>                 Top k nodes to select using PageRank algorithm
-      --pagerank-direction <DIR>  PageRank direction: 'depends-on' to rank depended-upon nodes, 'depended-by' to rank orchestrators (default: depended-by) [default: depended-by]
-      --query <NAME>              Name of the symbol/function to query (enables find_depends mode)
-      --recursive                 Search recursively for transitive dependencies (default: direct dependencies only)
-      --dependents                Return blocks that depend on the queried symbol instead of the ones it depends on
-  -h, --help                      Print help
-  -V, --version                   Print version
+--design-graph — Generate high-level design graph
+--pagerank --top-k <K> — Rank by importance (PageRank) and limit to top K
+--query <NAME> — Symbol/function to analyze
+--depends — Show what the symbol depends on
+--dependents — Show what depends on the symbol
+--recursive — Include transitive dependencies (vs. direct only)
+Output format (optional):
+
+--summary — Show file paths and line ranges (vs. full code texts)
+--print-ir — Internal: print intermediate representation
+--print-block — Internal: print basic block graph
+Examples:
+
+# Design graph with PageRank ranking
+llmcc --dir crates --lang rust --design-graph --pagerank --top-k 100
+
+# Dependencies and dependents of a symbol
+llmcc --dir crates --lang rust --query CompileCtxt --depends
+llmcc --dir crates --lang rust --query CompileCtxt --dependents --recursive
+
+# Cross-directory analysis
+llmcc --dir crates/llmcc-core/src --dir crates/llmcc-rust/src --lang rust --design-graph --pagerank --top-k 25
+
+# Multiple files
+llmcc --file crates/llmcc/src/main.rs --file crates/llmcc/src/lib.rs --lang rust --query run_main
 
 
 *** Please always use absolute path for --dir

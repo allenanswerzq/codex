@@ -31,8 +31,8 @@ When using the planning tool:
 
 `llmcc` is a **lightweight code indexing engine** that provides a structured, contextual view of your codebase.  
 
-- Always try to use `llmcc` over rg, grep for explore and understanding the single file or codebase
-- Use **`llmcc`** --project-graph --pagerank to understand a large codebase at the high level very quickly
+- Always try to use `llmcc --summary --query ` over rg, grep for quicky locate related code for a Symbol
+- Use **`llmcc`** --design-graph --pagerank to understand directories at the high level very quickly
 - Use **`llmcc`** to a subset of code/folders to get a **structured understanding** — definitions, call sites, related types, and symbol relationships.
 - Use **`llmcc`** --query to search related code a symbol, cloud be class/struct function, enum etc.
 - To explore transitive dependencies or call graphs, can use llmcc --query

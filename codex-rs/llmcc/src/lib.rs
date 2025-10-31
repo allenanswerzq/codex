@@ -1,24 +1,42 @@
 use anyhow::Result;
 use anyhow::anyhow;
+use clap::ArgGroup;
 use clap::Parser;
+
 use llmcc::LlmccOptions;
 use llmcc::run_main;
 use llmcc_python::LangPython;
 use llmcc_rust::LangRust;
-use std::process;
 
 #[derive(Parser, Debug)]
-#[command(name = "llmcc")]
-#[command(about = "llmcc: llm context compiler")]
-#[command(version)]
-pub struct Cli {
-    /// Files to compile
-    #[arg(value_name = "FILE", required_unless_present = "dir")]
+#[command(
+    name = "llmcc",
+    about = "llmcc: llm context compiler",
+    version,
+    group = ArgGroup::new("inputs").required(true).args(["files", "dirs"])
+)]
+pub struct Args {
+    /// Individual files to compile (repeatable)
+    #[arg(
+        short = 'f',
+        long = "file",
+        value_name = "FILE",
+        num_args = 1..,
+        action = clap::ArgAction::Append,
+        conflicts_with = "dirs"
+    )]
     files: Vec<String>,
 
-    /// Load all .rs files from a directory (recursive)
-    #[arg(short, long, value_name = "DIR")]
-    dir: Option<String>,
+    /// Directories to scan recursively (repeatable)
+    #[arg(
+        short = 'd',
+        long = "dir",
+        value_name = "DIR",
+        num_args = 1..,
+        action = clap::ArgAction::Append,
+        conflicts_with = "files"
+    )]
+    dirs: Vec<String>,
 
     /// Language to use: 'rust' or 'python'
     #[arg(long, value_name = "LANG", default_value = "rust")]
@@ -32,11 +50,19 @@ pub struct Cli {
     #[arg(long, default_value_t = false)]
     print_block: bool,
 
-    /// Print a project level graph focused on class relationships, good for understanding high-level design architecture
-    #[arg(long, default_value_t = false)]
-    project_graph: bool,
+    /// Render a scoped design graph for the provided files or directories
+    #[arg(
+        long = "design-graph",
+        default_value_t = false,
+        conflicts_with_all = ["depends", "dependents", "query"]
+    )]
+    design_graph: bool,
 
-    /// Use page rank algorithm to filter the most important nodes in the project graph
+    /// Summarize query output with file path and line range instead of full code blocks
+    #[arg(long, default_value_t = false)]
+    summary: bool,
+
+    /// Use page rank algorithm to filter the most important nodes in the high graph
     #[arg(long, default_value_t = false)]
     pagerank: bool,
 
@@ -44,16 +70,7 @@ pub struct Cli {
     #[arg(long, value_name = "K", requires = "pagerank")]
     top_k: Option<usize>,
 
-    /// PageRank direction: 'depends-on' to rank depended-upon nodes, 'depended-by' to rank orchestrators (default: depended-by)
-    #[arg(
-        long,
-        value_name = "DIR",
-        requires = "pagerank",
-        default_value = "depended-by"
-    )]
-    pagerank_direction: String,
-
-    /// Name of the symbol/function to query (enables find_depends mode)
+    /// Name of the symbol/function to query
     #[arg(long, value_name = "NAME")]
     query: Option<String>,
 
@@ -61,43 +78,52 @@ pub struct Cli {
     #[arg(long, default_value_t = false)]
     recursive: bool,
 
-    /// Return blocks that depend on the queried symbol instead of the ones it depends on
-    #[arg(long, default_value_t = false, conflicts_with = "recursive")]
+    /// Return blocks that the queried symbol depends on
+    #[arg(long, default_value_t = false, conflicts_with = "dependents")]
+    depends: bool,
+
+    /// Return blocks that depend on the queried symbol
+    #[arg(long, default_value_t = false, conflicts_with = "depends")]
     dependents: bool,
 }
 
-pub fn run(args: Cli) -> Result<()> {
-    let opts = LlmccOptions {
-        files: args.files,
-        dir: args.dir,
-        print_ir: args.print_ir,
-        print_block: args.print_block,
-        project_graph: args.project_graph,
-        pagerank: args.pagerank,
-        top_k: args.top_k,
-        pagerank_direction: args.pagerank_direction,
-        query: args.query,
-        recursive: args.recursive,
-        dependents: args.dependents,
-    };
-
-    let output = match args.lang.as_str() {
-        "rust" => run_main::<LangRust>(&opts).map_err(|err| anyhow!("{err}"))?,
-        "python" => run_main::<LangPython>(&opts).map_err(|err| anyhow!("{err}"))?,
-        _ => return Err(anyhow!("Unknown language: {0}", args.lang)),
-    };
-
-    if let Some(output) = output {
-        println!("{output}");
+pub fn run(args: Args) -> Result<()> {
+    if args.query.is_none() && (args.depends || args.dependents) {
+        eprintln!("Warning: --depends/--dependents flags are ignored without --query");
     }
 
+    if args.pagerank && !args.design_graph {
+        return Err(anyhow!("--pagerank requires --design-graph"));
+    }
+
+    let opts = LlmccOptions {
+        files: args.files,
+        dirs: args.dirs,
+        print_ir: args.print_ir,
+        print_block: args.print_block,
+        design_graph: args.design_graph,
+        pagerank: args.pagerank,
+        top_k: args.top_k,
+        query: args.query,
+        depends: args.depends,
+        dependents: args.dependents,
+        recursive: args.recursive,
+        summary: args.summary,
+    };
+
+    let result = match args.lang.as_str() {
+        "rust" => run_main::<LangRust>(&opts),
+        "python" => run_main::<LangPython>(&opts),
+        _ => Err(format!("Unknown language: {}", args.lang).into()),
+    };
+
+    if let Ok(Some(output)) = result {
+        println!("{output}");
+    }
     Ok(())
 }
 
-pub fn main() {
-    let cli = Cli::parse();
-    if let Err(err) = run(cli) {
-        eprintln!("{err}");
-        process::exit(1);
-    }
+pub fn main() -> Result<()> {
+    let args = Args::parse();
+    run(args)
 }
