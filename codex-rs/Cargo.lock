@@ -903,6 +903,7 @@ dependencies = [
  "codex-apply-patch",
  "codex-core",
  "codex-linux-sandbox",
+ "codex-llmcc",
  "dotenvy",
  "tempfile",
  "tokio",
@@ -973,6 +974,7 @@ dependencies = [
  "codex-common",
  "codex-core",
  "codex-exec",
+ "codex-llmcc",
  "codex-login",
  "codex-mcp-server",
  "codex-process-hardening",
@@ -1225,6 +1227,17 @@ dependencies = [
  "seccompiler",
  "tempfile",
  "tokio",
+]
+
+[[package]]
+name = "codex-llmcc"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "llmcc",
+ "llmcc-python",
+ "llmcc-rust",
 ]
 
 [[package]]
@@ -3520,6 +3533,60 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "241eaef5fd12c88705a01fc1066c48c4b36e0dd4377dcdc7ec3942cea7a69956"
 
 [[package]]
+name = "llmcc"
+version = "0.2.47"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "08e6a8122a22672ea63c3114438d8cd3fe10ce18a8cb773c3b52b76259112ac0"
+dependencies = [
+ "clap",
+ "ignore",
+ "llmcc-core",
+ "llmcc-python",
+ "llmcc-rust",
+ "rayon",
+ "regex",
+]
+
+[[package]]
+name = "llmcc-core"
+version = "0.2.47"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f663cc148d5c2f9e2878b164dab690a48ca07f309348b1032ff594948c1609ec"
+dependencies = [
+ "ignore",
+ "paste",
+ "rayon",
+ "regex",
+ "string-interner",
+ "strum 0.27.2",
+ "strum_macros 0.27.2",
+ "tree-sitter",
+ "typed-arena",
+]
+
+[[package]]
+name = "llmcc-python"
+version = "0.2.47"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5aef593dcdcdbc02bce9b9aa7e6852b33a5a2840a8815f5068649a5cea8b7eaf"
+dependencies = [
+ "llmcc-core",
+ "tree-sitter",
+ "tree-sitter-python",
+]
+
+[[package]]
+name = "llmcc-rust"
+version = "0.2.47"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03fef8b1e48fa8f9275ba2fdd1093aeaead9832aa765aa466ac13ecf1cda477c"
+dependencies = [
+ "llmcc-core",
+ "tree-sitter",
+ "tree-sitter-rust",
+]
+
+[[package]]
 name = "lock_api"
 version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4800,6 +4867,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "rayon"
+version = "1.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "368f01d005bf8fd9b1206fb6fa653e6c4a81ceb1466406b81792d87c5677a58f"
+dependencies = [
+ "either",
+ "rayon-core",
+]
+
+[[package]]
+name = "rayon-core"
+version = "1.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22e18b0f0062d30d4230b2e85ff77fdfe4326feb054b9783a3460d8435c8ab91"
+dependencies = [
+ "crossbeam-deque",
+ "crossbeam-utils",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.5.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5889,6 +5976,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b2231b7c3057d5e4ad0156fb3dc807d900806020c5ffa3ee6ff2c8c76fb8520"
 
 [[package]]
+name = "string-interner"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23de088478b31c349c9ba67816fa55d9355232d63c3afea8bf513e31f0f1d2c0"
+dependencies = [
+ "hashbrown 0.15.4",
+ "serde",
+]
+
+[[package]]
 name = "string_cache"
 version = "0.8.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6654,6 +6751,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4013970217383f67b18aef68f6fb2e8d409bc5755227092d32efb0422ba24b8"
 
 [[package]]
+name = "tree-sitter-python"
+version = "0.25.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bf85fd39652e740bf60f46f4cda9492c3a9ad75880575bf14960f775cb74a1c"
+dependencies = [
+ "cc",
+ "tree-sitter-language",
+]
+
+[[package]]
+name = "tree-sitter-rust"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4b9b18034c684a2420722be8b2a91c9c44f2546b631c039edf575ccba8c61be1"
+dependencies = [
+ "cc",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "try-lock"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6682,6 +6799,12 @@ dependencies = [
  "syn 2.0.104",
  "termcolor",
 ]
+
+[[package]]
+name = "typed-arena"
+version = "2.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6af6ae20167a9ece4bcb41af5b80f8a1f1df981f6391189ce00fd257af04126a"
 
 [[package]]
 name = "typenum"
