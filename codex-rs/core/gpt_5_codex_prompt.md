@@ -37,10 +37,11 @@ Input (required, one of):
 
 -f, --file <FILE>... — Individual files to compile (repeatable)
 -d, --dir <DIR>... — Directories to scan recursively (repeatable)
-Language (optional):
+**Language** (optional):
 
 --lang <LANG> — Language: 'rust' or 'python' [default: rust]
-Analysis (optional):
+
+**Analysis** (optional):
 
 --design-graph — Generate high-level design graph
 --pagerank --top-k <K> — Rank by importance (PageRank) and limit to top K
@@ -48,12 +49,14 @@ Analysis (optional):
 --depends — Show what the symbol depends on
 --dependents — Show what depends on the symbol
 --recursive — Include transitive dependencies (vs. direct only)
-Output format (optional):
 
---summary — Show file paths and line ranges (vs. full code texts)
+**Output format** (optional):
+--summary — Show file paths and line ranges (vs. full code texts) only used with --query
 --print-ir — Internal: print intermediate representation
 --print-block — Internal: print basic block graph
-Examples:
+
+
+**Examples**:
 
 # Design graph with PageRank ranking
 llmcc --dir crates --lang rust --design-graph --pagerank --top-k 100
