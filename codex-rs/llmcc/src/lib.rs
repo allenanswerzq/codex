@@ -15,7 +15,7 @@ use llmcc_rust::LangRust;
     version,
     group = ArgGroup::new("inputs").required(true).args(["files", "dirs"])
 )]
-pub struct Args {
+pub struct Cli {
     /// Individual files to compile (repeatable)
     #[arg(
         short = 'f',
@@ -87,7 +87,7 @@ pub struct Args {
     dependents: bool,
 }
 
-pub fn run(args: Args) -> Result<()> {
+pub fn run(args: Cli) -> Result<()> {
     if args.query.is_none() && (args.depends || args.dependents) {
         eprintln!("Warning: --depends/--dependents flags are ignored without --query");
     }
@@ -124,6 +124,6 @@ pub fn run(args: Args) -> Result<()> {
 }
 
 pub fn main() -> Result<()> {
-    let args = Args::parse();
+    let args = Cli::parse();
     run(args)
 }
